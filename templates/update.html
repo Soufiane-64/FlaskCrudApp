@@ -4,10 +4,51 @@
 
 {% block content %}
 <div class="content">
-    <h1>Update Task</h1>
-    <form action="/update/{{task.id}}" method="post" class="task-form">
-        <input type="text" name="content" id="content" value="{{task.content}}">
-        <input type="submit" value="Update">
-    </form>    
+    <h1>
+        <span class="mascot" aria-hidden="true">🤖</span>
+        <span class="rainbow-title">Update Task</span>
+    </h1>
+
+    <form id="updateForm" action="/update/{{task.id}}" method="post" class="task-form" novalidate>
+        <input class="playful-input" type="text" name="content" id="content" value="{{task.content}}" minlength="1" maxlength="200" required>
+        <input class="wiggle" type="submit" value="Update">
+    </form>
+
+    <!-- Confetti container (created empty, populated by JS on submit) -->
+    <div id="confetti" class="confetti" aria-hidden="true"></div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Lightweight confetti: spawn colorful rectangles that fall and fade
+function makeConfetti(count){
+    const container = document.getElementById('confetti');
+    if(!container) return;
+    const colors = ['#ff5fd1','#ffd15f','#6fff8f','#4be7ff','#8b6fff','#ff6b6b'];
+    const w = container.clientWidth || window.innerWidth;
+    for(let i=0;i<count;i++){
+        const el = document.createElement('span');
+        el.className = 'piece';
+        const left = Math.random()*w;
+        el.style.left = left + 'px';
+        el.style.top = '-10px';
+        el.style.background = colors[Math.floor(Math.random()*colors.length)];
+        el.style.transform = 'rotate('+ (Math.random()*360) +'deg)';
+        container.appendChild(el);
+
+        // animate using CSS transforms & JS for lifetime
+        const duration = 1200 + Math.random()*1000;
+        el.animate([
+            { transform: el.style.transform + ' translateY(0px)', opacity: 1 },
+            { transform: el.style.transform + ' translateY(' + (200 + Math.random()*200) + 'px) rotate(' + (Math.random()*720-360) + 'deg)', opacity: 0 }
+        ], { duration: duration, easing: 'cubic-bezier(.2,.8,.2,1)'}).onfinish = ()=> el.remove();
+    }
+}
+
+document.getElementById('updateForm').addEventListener('submit', function(e){
+    // fire cheerful confetti but don't block form submit
+    try{ makeConfetti(18); }catch(err){}
+});
+</script>
 {% endblock %}

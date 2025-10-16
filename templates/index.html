@@ -15,20 +15,22 @@
                 <th>Actions</th>
             </tr>
             {% for task in tasks %}
-                <tr>
+                <tr class="task-row{% if task.completed %} completed{% endif %}">
                     <td>{{ task.content }}</td>
-                    <td>{{ task.date_created.date() }}</td>
+                    <td>{{ task.date_created|localtime }}</td>
                     <td>
+                        <a href="/toggle/{{task.id}}">{% if task.completed %}Undo{% else %}Complete{% endif %}</a>
+                        &nbsp;|&nbsp;
                         <a href="/update/{{task.id}}">Update</a>
-                        <br>
-                        <a href="/delete/{{task.id}}">Delete</a>
-                    </th>
-                <tr>
+                        &nbsp;|&nbsp;
+                        <a href="/delete/{{task.id}}" onclick="return confirm('Delete this task?');">Delete</a>
+                    </td>
+                </tr>
             {% endfor %}
         </table>
     {% endif %}
-    <form action="/" method="post" class="task-form">
-        <input type="text" name="content" id="content">
+    <form action="/" method="post" class="task-form" novalidate>
+        <input type="text" name="content" id="content" minlength="1" maxlength="200" placeholder="Add a new task" required>
         <input type="submit" value="Add Task">
     </form>    
 </div>
